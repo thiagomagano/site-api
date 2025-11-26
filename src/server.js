@@ -21,7 +21,7 @@ app.get("/api/projects", async (req, res) => {
     const projects = await Project.find();
     res.status(200).json(projects);
   } catch (err) {
-    console.error("ERRO REAL:", err);
+    console.error("Erro ao buscar projetos: ", err);
     res.status(500).json({ error: "Erro ao buscar projetos" });
   }
 });
@@ -31,7 +31,8 @@ app.post("/api/projects", async (req, res) => {
     const project = await Project.create(req.body);
     res.status(201).json(project);
   } catch (err) {
-    res.status(400).json({ error: "Erro ao criar projetos" });
+    console.error("Erro ao criar novo projeto: ", err);
+    res.status(400).json({ error: "Erro ao criar novo projeto" });
   }
 });
 
