@@ -121,4 +121,39 @@ describe("Rotas de /projects (com mongo em memória)", () => {
       expect(res.body.stack).toEqual([]);
     });
   });
+
+  describe("PUT /api/projects/:id", () => {
+    it("deve atualizar um projeto existente", async () => {
+      const project = await Project.create({
+        title: "Título Original",
+        description: "Descrição original",
+        stack: ["nodedotjs"],
+      });
+
+      const updatePayload = {
+        title: "Título Atualizado",
+        description: "Descrição atualizada",
+        stack: ["nodedotjs", "typescript"],
+      };
+
+      const res = await request(app)
+        .put(`/api/projects/${project._id}`)
+        .send(updatePayload);
+
+      expect(res.status).toBe(200);
+      expect(res.body.title).toBe("Título Atualizado");
+      expect(res.body.description).toBe("Descrição atualizada");
+      expect(res.body.stack).toEqual(["nodedotjs", "typescript"]);
+    });
+
+    it("deve retornar 404 quando projeto não existe", async () => {
+      const fakeId = "507f1f77bcf86cd799439011";
+      const res = await request(app)
+        .put(`/api/projects/${fakeId}`)
+        .send({ title: "Teste", description: "Teste" });
+
+      expect(res.status).toBe(404);
+      expect(res.body.error).toBe("Projeto não encontrado");
+    });
+  });
 });
