@@ -38,6 +38,30 @@ class ProjectController {
     }
   }
 
+  async update(req, res) {
+    try {
+      const { id } = req.params;
+
+      const project = await Project.findByIdAndUpdate(
+        id,
+        req.body,
+        {
+          new: true,
+          runValidators: true
+        }
+      );
+
+      if (!project) {
+        return res.status(404).json({ error: "Projeto não encontrado" });
+      }
+
+      return res.status(200).json(project);
+    } catch (err) {
+      console.error("Erro ao atualizar projeto: ", err);
+      return res.status(400).json({ error: "Erro ao atualizar projeto" });
+    }
+  }
+
   async delete(req, res) {
     try {
       const { id } = req.params;
