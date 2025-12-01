@@ -156,4 +156,30 @@ describe("Rotas de /projects (com mongo em memória)", () => {
       expect(res.body.error).toBe("Projeto não encontrado");
     });
   });
+
+  describe("DELETE /api/projects/:id", () => {
+    it("deve deletar um projeto existente", async () => {
+      const project = await Project.create({
+        title: "Projeto para deletar",
+        description: "Será deletado",
+      });
+
+      const res = await request(app).delete(`/api/projects/${project._id}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toBe("Projeto deletado com sucesso!");
+
+
+      const deleted = await Project.findById(project._id);
+      expect(deleted).toBeNull();
+    });
+
+    it("deve retornar 404 quando projeto não existe", async () => {
+      const fakeId = "507f1f77bcf86cd799439011";
+      const res = await request(app).delete(`/api/projects/${fakeId}`);
+
+      expect(res.status).toBe(404);
+      expect(res.body.error).toBe("Projeto não encontrado");
+    });
+  });
 });
