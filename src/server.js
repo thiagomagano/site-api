@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
 import connectDB from "./config/database.js";
-import Project from "./models/Project.js";
+import projectRoutes from "./routes/projectRoutes.js";
 
 dotenv.config();
 
@@ -16,25 +16,9 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/projects", async (req, res) => {
-  try {
-    const projects = await Project.find();
-    res.status(200).json(projects);
-  } catch (err) {
-    console.error("Erro ao buscar projetos: ", err);
-    res.status(500).json({ error: "Erro ao buscar projetos" });
-  }
-});
 
-app.post("/api/projects", async (req, res) => {
-  try {
-    const project = await Project.create(req.body);
-    res.status(201).json(project);
-  } catch (err) {
-    console.error("Erro ao criar novo projeto: ", err);
-    res.status(400).json({ error: "Erro ao criar novo projeto" });
-  }
-});
+app.use("/api/projects", projectRoutes);
+
 
 app.get("/api", (req, res) => {
   res.json({
