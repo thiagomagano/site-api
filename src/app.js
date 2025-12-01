@@ -21,7 +21,7 @@ app.get("/api", (_, res) => {
 
 app.get("/api/health", (_, res) => {
   const healthcheck = {
-    status: 'UP',
+    status: "UP",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
   };
