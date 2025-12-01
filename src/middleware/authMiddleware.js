@@ -8,6 +8,6 @@ export const requireAuth = (req, res, next) => {
   });
 };
 
-export const optionalAuth = (_, _, next) => {
+export const optionalAuth = (_req, _res, next) => {
   next();
 };
