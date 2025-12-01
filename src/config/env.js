@@ -5,4 +5,6 @@ export const config = {
   port: process.env.PORT || 3000,
   env: process.env.NODE_ENV || "development",
   mongoUri: process.env.MONGO_URI,
+  adminEmail: process.env.ADMIN_EMAIL,
+  adminPassword: process.env.ADMIN_PASSWORD
 };
