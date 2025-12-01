@@ -1,9 +1,10 @@
-import Project from "../models/Project.js";
+import Service from "../services/ProjectService.js";
+
 
 class ProjectController {
-  async index(req, res) {
+  async index(_, res) {
     try {
-      const projects = await Project.find();
+      const projects = await Service.findAll();
       return res.status(200).json(projects);
     } catch (err) {
       console.error("Erro ao buscar projetos: ", err);
@@ -14,7 +15,7 @@ class ProjectController {
   async show(req, res) {
     try {
       const { id } = req.params;
-      const project = await Project.findById(id);
+      const project = await Service.findById(id);
 
       if (!project) {
         return res.status(404).json({ error: "Projeto não encontrado" });
@@ -30,7 +31,7 @@ class ProjectController {
 
   async create(req, res) {
     try {
-      const project = await Project.create(req.body);
+      const project = await Service.create(req.body);
       return res.status(201).json(project);
     } catch (err) {
       console.error("Erro ao criar novo projeto: ", err);
@@ -42,14 +43,7 @@ class ProjectController {
     try {
       const { id } = req.params;
 
-      const project = await Project.findByIdAndUpdate(
-        id,
-        req.body,
-        {
-          new: true,
-          runValidators: true
-        }
-      );
+      const project = await Service.update(id, req.body);
 
       if (!project) {
         return res.status(404).json({ error: "Projeto não encontrado" });
@@ -65,7 +59,7 @@ class ProjectController {
   async delete(req, res) {
     try {
       const { id } = req.params;
-      const deleted = await Project.findByIdAndDelete(id);
+      const deleted = await Service.delete(id);
 
       if (!deleted) {
         return res.status(404).json({ error: "Projeto não encontrado" });
