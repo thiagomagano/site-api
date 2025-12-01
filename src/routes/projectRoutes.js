@@ -7,10 +7,12 @@ const router = express.Router();
 
 // GET /api/projects
 router.get("/", ProjectController.index);
+
+router.get("/:id", ProjectController.show);
 // POST /api/projects
 router.post("/", ProjectController.create);
 // DELETE /api/projects/:id
-router.delete("/:id", (req, res) => ProjectController.delete(req, res));
+router.delete("/:id", ProjectController.delete);
 
 
 export default router;

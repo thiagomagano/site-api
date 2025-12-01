@@ -11,6 +11,23 @@ class ProjectController {
     }
   }
 
+  async show(req, res) {
+    try {
+      const { id } = req.params;
+      const project = await Project.findById(id);
+
+      if (!project) {
+        return res.status(404).json({ error: "Projeto não encontrado" });
+      }
+
+      return res.status(200).json(project);
+
+    } catch (err) {
+      console.error("Erro ao buscar projeto: ", err);
+      return res.status(500).json({ error: "Erro ao buscar projeto" })
+    }
+  }
+
   async create(req, res) {
     try {
       const project = await Project.create(req.body);
