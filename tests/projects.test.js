@@ -76,4 +76,24 @@ describe("Rotas de /projects (com mongo em memória)", () => {
       expect(res.body.title).toBe("Projeto Teste");
     });
   });
+
+  describe("POST /api/projects", () => {
+    it("deve criar um projeto com dados válidos", async () => {
+      const payload = {
+        title: "Novo Projeto",
+        description: "Descrição do novo projeto",
+        stack: ["nodedotjs", "express", "svelte"],
+        link: "https://example.com.br",
+        github: "https://github.com/thiagomagano/repo",
+      };
+
+      const res = await request(app).post("/api/projects").send(payload);
+
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body.title).toBe(payload.title);
+      expect(res.body.description).toBe(payload.description);
+      expect(res.body.stack).toEqual(payload.stack);
+    });
+  });
 });
