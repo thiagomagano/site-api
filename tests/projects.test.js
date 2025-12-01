@@ -21,7 +21,7 @@ describe("Rotas de /projects (com mongo em memória)", () => {
 
   describe("GET /api/projects", async () => {
 
-    it("deve responder com status 200 e array bazio quando não há projetos", async () => {
+    it("deve responder com status 200 e array vazio quando não há projetos", async () => {
       const res = await request(app).get("/api/projects");
 
       expect(res.status).toBe(200);
@@ -94,6 +94,31 @@ describe("Rotas de /projects (com mongo em memória)", () => {
       expect(res.body.title).toBe(payload.title);
       expect(res.body.description).toBe(payload.description);
       expect(res.body.stack).toEqual(payload.stack);
+    });
+
+
+    it("deve retornar 400 quando faltam campos obrigatórios", async () => {
+      const payload = {
+        title: "Só título",
+      };
+
+      const res = await request(app).post("/api/projects").send(payload);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+    });
+
+    it("deve criar projeto mesmo sem campos opcionais", async () => {
+      const payload = {
+        title: "Projeto minimo",
+        description: "Só camps obrigatorios"
+      };
+
+      const res = await request(app).post("/api/projects").send(payload);
+
+      expect(res.status).toBe(201);
+      expect(res.body.title).toBe(payload.title);
+      expect(res.body.stack).toEqual([]);
     });
   });
 });
