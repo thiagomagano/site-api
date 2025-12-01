@@ -50,6 +50,30 @@ describe("Rotas de /projects (com mongo em memória)", () => {
       expect(res.body[0]).toHaveProperty("_id");
       expect(res.body[0]).toHaveProperty("title");
     })
+  });
 
-  })
+  describe("GET /api/projects/:id", () => {
+    it("deve retornar 404 quando projeto não existe", async () => {
+      const fakeId = "507f1f77bcf86cd799439011";
+      const res = await request(app).get(`/api/projects/${fakeId}`);
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      expect(res.body.error).toBe("Projeto não encontrado");
+    });
+
+    it("deve retornar o projeto quando existe", async () => {
+      const project = await Project.create({
+        title: "Projeto Teste",
+        description: "Descrição teste",
+        stack: ["nodedotjs", "express", "mongo"],
+      });
+
+      const res = await request(app).get(`/api/projects/${project._id}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body._id).toBe(project._id.toString());
+      expect(res.body.title).toBe("Projeto Teste");
+    });
+  });
 });
