@@ -6,9 +6,11 @@ import MongoStore from "connect-mongo";
 import projectRoutes from "./routes/projectRoutes.js";
 import authRoutes from "./routes/authRoutes.js"
 import { config } from "./config/env.js";
+import pino from "pino-http";
+
 
 const app = express();
-
+app.use(pino());
 app.use(helmet());
 app.use(cors({
   origin: process.env.CORS_ORIGIN || "http://localhost:5173",
