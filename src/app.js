@@ -4,37 +4,45 @@ import cors from "cors";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import projectRoutes from "./routes/projectRoutes.js";
-import authRoutes from "./routes/authRoutes.js"
+import authRoutes from "./routes/authRoutes.js";
 import { config } from "./config/env.js";
 import pino from "pino-http";
-
 
 const app = express();
 app.use(pino());
 app.use(helmet());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-  credentials: true
-}));
+app.set("trust proxy", 1);
+app.use(
+  cors({
+    origin:
+      process.env.CORS_ORIGIN ||
+      "http://localhost:5173" ||
+      "http://localhost:4000",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Configuração de sessão
-app.use(session({
-  name: "sessionId",
-  secret: process.env.SESSION_SECRET || "your-secret-key-change-in-production",
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: config.mongoUri,
-    ttl: 14 * 24 * 60 * 60, // 14 dias
+app.use(
+  session({
+    name: "sessionId",
+    secret:
+      process.env.SESSION_SECRET || "your-secret-key-change-in-production",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: config.mongoUri,
+      ttl: 14 * 24 * 60 * 60, // 14 dias
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true, // Proteção XSS
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 dias
+      sameSite: "lax",
+    },
   }),
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true, // Proteção XSS
-    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 dias
-    sameSite: "lax"
-  }
-}));
+);
 
 app.use("/api/projects", projectRoutes);
 app.use("/api/auth", authRoutes);
